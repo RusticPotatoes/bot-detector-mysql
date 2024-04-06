@@ -3,17 +3,37 @@ services:
   mysql:
     build:
       context: .
-    image: mysql
+      dockerfile: Dockerfile
+    image: bot-detector/bd-mysql:latest
     environment:
       - MYSQL_ROOT_PASSWORD=root_bot_buster
+      - MYSQL_USER=botssuck
+      - MYSQL_PASSWORD=botdetector
     volumes:
-      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-      - ./mount:/var/lib/mysql
+      - './mount:/var/lib/mysql'
+      - './docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d'
     ports:
-      - "127.0.0.1:3306:3306"
+      - "3306:3306"
     networks:
       - botdetector-network
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -proot_bot_buster"]
+      interval: 10s
+      retries: 3
+      start_period: 30s
+      timeout: 5s
+
+  mysql_setup:
+    container_name: mysql_setup
+    image: bot-detector/mysql_setup
+    build:
+      context: ./mysql_setup
+    command: ["python", "-u","setup_mysql.py"]
+    networks:
+      - botdetector-network
+    depends_on:
+      mysql:
+        condition: service_healthy
 
 networks:
   botdetector-network:
- 

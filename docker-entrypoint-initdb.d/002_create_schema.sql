@@ -652,7 +652,7 @@ CREATE TABLE IF NOT EXISTS `playerdata`.`playerHiscoreDataLatest` (
   `sarachnis` INT NULL DEFAULT NULL,
   `scorpia` INT NULL DEFAULT NULL,
   `skotizo` INT NULL DEFAULT NULL,
-  `Tempoross` INT NOT NULL,
+  `Tempoross` INT NULL DEFAULT NULL,
   `the_gauntlet` INT NULL DEFAULT NULL,
   `the_corrupted_gauntlet` INT NULL DEFAULT NULL,
   `theatre_of_blood` INT NULL DEFAULT NULL,
