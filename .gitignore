@@ -1,2 +1,4 @@
 mount/*
 !mount/.gitkeep
+.venv/*
+*/.venv/*

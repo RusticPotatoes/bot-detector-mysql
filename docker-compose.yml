@@ -1,19 +1,34 @@
-version: '3'
 services:
   mysql:
+    container_name: database
     build:
-      context: .
-    image: mysql
+      context: ./mysql
+    image: bot-detector/mysql:latest
     environment:
       - MYSQL_ROOT_PASSWORD=root_bot_buster
     volumes:
-      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-      - ./mount:/var/lib/mysql
+      - ./mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      # - ./mysql/mount:/var/lib/mysql # creates persistence
     ports:
-      - "127.0.0.1:3306:3306"
+      - 3307:3306
     networks:
       - botdetector-network
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
 
+  mysql_setup:
+    container_name: mysql_setup
+    image: bot-detector/mysql_setup
+    build:
+      context: ./mysql_setup
+    command: ["python", "-u","setup_mysql.py"]
+    networks:
+      - botdetector-network
+    depends_on:
+      mysql:
+        condition: service_healthy
 networks:
   botdetector-network:
- 
+  
